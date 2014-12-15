@@ -5,7 +5,7 @@ C version of Parabaik Myanmar Text converter (Zawgyi > Unicode) [ https://github
 
 This project uses the rules from original javascript converter. The code needs ICU library. Project also included NSString category to use with Objective-C on iOS and Mac OS X.
 
-Non Objective-C program can just include parabaik.h and parabaik.c in your program.
+Non Objective-C program can just include parabaik.h and parabaik.c in your program. Objective-C project may also use NSString+ParabaikConverter.h and NSString+ParabaikConverter.m.
 
 call `char *zawgyi_to_unicode(const char *input)` passing UTF-8 encoded ZawGyi string as argument. The function will returns UTF-8 encoded Burmese unicode string.
 
