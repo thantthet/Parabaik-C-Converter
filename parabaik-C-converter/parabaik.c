@@ -53,7 +53,7 @@ str_concat(char *s1, char *s2)
     return cat;
 }
 
-char *zawgyi_to_unicode(char *input)
+char *zawgyi_to_unicode(const char *input)
 {
     char * tallAA = "\u102B";
     __unused char * AA = "\u102C";

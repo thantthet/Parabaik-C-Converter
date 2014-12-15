@@ -11,6 +11,6 @@
 
 #include <stdio.h>
 
-char *zawgyi_to_unicode(char *input);
+char *zawgyi_to_unicode(const char *input);
 
 #endif /* defined(__parabaik_C_converter__parabaik__) */
