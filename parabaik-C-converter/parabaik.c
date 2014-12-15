@@ -56,17 +56,17 @@ str_concat(char *s1, char *s2)
 char *zawgyi_to_unicode(char *input)
 {
     char * tallAA = "\u102B";
-    char * AA = "\u102C";
+    __unused char * AA = "\u102C";
     char * vi = "\u102D";
     // lone gyi tin
-    char * ii = "\u102E";
+    __unused char * ii = "\u102E";
     char * u = "\u102F";
     char * uu = "\u1030";
-    char * ve = "\u1031";
-    char * ai = "\u1032";
+    __unused char * ve = "\u1031";
+    __unused char * ai = "\u1032";
     char * ans = "\u1036";
     char * db = "\u1037";
-    char * visarga = "\u1038";
+    __unused char * visarga = "\u1038";
     
     char * asat = "\u103A";
     
@@ -174,7 +174,7 @@ char *zawgyi_to_unicode(char *input)
         RegexReplacePairMake("\u1091","\u100F\u1039\u100D"),
         RegexReplacePairMake("\u1092","\u100B\u1039\u100C"),
         RegexReplacePairMake("\u1097","\u100B\u1039\u100B"),
-        RegexReplacePairMake("\u106F","\u100E\u1039\u100D"),
+        RegexReplacePairMake("\u106F","\u100D\u1039\u100E"),
         RegexReplacePairMake("\u106E","\u100D\u1039\u100D"),
         
         /////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ char *zawgyi_to_unicode(char *input)
         u_strncpy(temp, output, length);
         uregex_setText(regex, temp, length, &errorCode);
         errorCode = U_ZERO_ERROR;
-        int32_t __unused after_replaced = uregex_replaceAll(regex, pattern[i].replace, -1, output, outputCapacity, &errorCode);
+        __unused int32_t after_replaced = uregex_replaceAll(regex, pattern[i].replace, -1, output, outputCapacity, &errorCode);
         free(temp);
         if (errorCode == U_STRING_NOT_TERMINATED_WARNING) { // not enough space ?
             outputCapacity *= 2;
