@@ -14,7 +14,9 @@ Installing
 
 #### Usage
 ```c
-print_f("This is Unicode string: %s", zawgyi_to_unicode("ZawGyi sequence string"));
+char *unicode = zawgyi_to_unicode("ZawGyi sequence string");
+print_f("This is Unicode string: %s", unicode);
+free(unicode); // be sure to free when you are done
 ```
 
 ### Objective-C Project
