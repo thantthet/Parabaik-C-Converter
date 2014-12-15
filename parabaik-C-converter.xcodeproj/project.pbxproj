@@ -28,8 +28,6 @@
 /* Begin PBXFileReference section */
 		907B6D101A3F7A310063BF23 /* NSString+ParabaikConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ParabaikConverter.h"; sourceTree = "<group>"; };
 		907B6D111A3F7A310063BF23 /* NSString+ParabaikConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ParabaikConverter.m"; sourceTree = "<group>"; };
-		907B6D131A3F7C900063BF23 /* COPYING.LESSER */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING.LESSER; sourceTree = "<group>"; };
-		907B6D141A3F7CAC0063BF23 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		90EEB1331A3F33EA0078093C /* parabaik-C-converter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "parabaik-C-converter"; sourceTree = BUILT_PRODUCTS_DIR; };
 		90EEB1361A3F33EA0078093C /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		90EEB13D1A3F34040078093C /* parabaik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parabaik.c; sourceTree = "<group>"; };
@@ -69,8 +67,6 @@
 		90EEB1351A3F33EA0078093C /* parabaik-C-converter */ = {
 			isa = PBXGroup;
 			children = (
-				907B6D141A3F7CAC0063BF23 /* LICENSE */,
-				907B6D131A3F7C900063BF23 /* COPYING.LESSER */,
 				90EEB1361A3F33EA0078093C /* main.c */,
 				90EEB13D1A3F34040078093C /* parabaik.c */,
 				90EEB13E1A3F34040078093C /* parabaik.h */,
