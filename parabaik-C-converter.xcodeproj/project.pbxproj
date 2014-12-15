@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		90EEB1371A3F33EA0078093C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90EEB1361A3F33EA0078093C /* main.c */; };
+		90EEB13F1A3F34040078093C /* parabaik.c in Sources */ = {isa = PBXBuildFile; fileRef = 90EEB13D1A3F34040078093C /* parabaik.c */; };
+		90EEB1411A3F504A0078093C /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 90EEB1401A3F504A0078093C /* libicucore.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,9 @@
 /* Begin PBXFileReference section */
 		90EEB1331A3F33EA0078093C /* parabaik-C-converter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "parabaik-C-converter"; sourceTree = BUILT_PRODUCTS_DIR; };
 		90EEB1361A3F33EA0078093C /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		90EEB13D1A3F34040078093C /* parabaik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parabaik.c; sourceTree = "<group>"; };
+		90EEB13E1A3F34040078093C /* parabaik.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parabaik.h; sourceTree = "<group>"; };
+		90EEB1401A3F504A0078093C /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90EEB1411A3F504A0078093C /* libicucore.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +47,7 @@
 		90EEB12A1A3F33EA0078093C = {
 			isa = PBXGroup;
 			children = (
+				90EEB1401A3F504A0078093C /* libicucore.dylib */,
 				90EEB1351A3F33EA0078093C /* parabaik-C-converter */,
 				90EEB1341A3F33EA0078093C /* Products */,
 			);
@@ -58,6 +65,8 @@
 			isa = PBXGroup;
 			children = (
 				90EEB1361A3F33EA0078093C /* main.c */,
+				90EEB13D1A3F34040078093C /* parabaik.c */,
+				90EEB13E1A3F34040078093C /* parabaik.h */,
 			);
 			path = "parabaik-C-converter";
 			sourceTree = "<group>";
@@ -118,6 +127,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90EEB13F1A3F34040078093C /* parabaik.c in Sources */,
 				90EEB1371A3F33EA0078093C /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -202,6 +212,11 @@
 		90EEB13B1A3F33EA0078093C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include/,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -209,6 +224,11 @@
 		90EEB13C1A3F33EA0078093C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include/,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
