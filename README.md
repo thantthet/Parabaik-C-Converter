@@ -1,7 +1,7 @@
 Parabaik-C-Converter
 ====================
 
-C version of Parabaik Myanmar Text converter (Zawgyi > Unicode) [ https://github.com/ngwestar/parabaik ] which ment to use with C/C++ or Objective-C.
+C implementation of Parabaik Myanmar Text converter (Zawgyi > Unicode) [ https://github.com/ngwestar/parabaik ] which ment to use with C/C++ or Objective-C.
 
 This project uses the rules from original javascript converter. The code needs ICU library. Project also included NSString category to use with Objective-C on iOS and Mac OS X.
 
