@@ -14,9 +14,12 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "parabaik.h"
 
 int main(int argc, const char * argv[]) {
-    zawgyi_to_unicode("သီဟိုဠ္မွ ဉာဏ္ႀကီးရွင္သည္ အာယုဝၯနေဆးညႊန္းစာကို ဇလြန္ေဈးေဘးဗာဒံပင္ထက္ အဓိ႒ာန္လ်က္ ဂဃနဏဖတ္ခဲ့သည္။");
+    char *outCStr = zawgyi_to_unicode("သီဟိုဠ္မွ ဉာဏ္ႀကီးရွင္သည္ အာယုဝၯနေဆးညႊန္းစာကို ဇလြန္ေဈးေဘးဗာဒံပင္ထက္ အဓိ႒ာန္လ်က္ ဂဃနဏဖတ္ခဲ့သည္။");
+    printf("%s\n", outCStr);
+    free(outCStr);
     return 0;
 }

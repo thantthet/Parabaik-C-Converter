@@ -251,7 +251,6 @@ char *zawgyi_to_unicode(const char *input)
     
     char *outCStr = toChar(output);
     free(output);
-    printf("%s\n", outCStr);
     return outCStr;
 }
 
