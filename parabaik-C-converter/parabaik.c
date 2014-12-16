@@ -21,10 +21,33 @@
 
 #include <unicode/ustring.h>
 #include <unicode/uregex.h>
-#include <unicode/ucnv.h>
+#if TARGET_OS_IPHONE
+    typedef struct UConverter UConverter;
+
+    U_STABLE UConverter* U_EXPORT2
+    ucnv_open(const char *converterName, UErrorCode *err);
+
+    U_STABLE void  U_EXPORT2
+    ucnv_close(UConverter * converter);
+
+    U_STABLE int32_t U_EXPORT2
+    ucnv_toUChars(UConverter *cnv,
+                  UChar *dest, int32_t destCapacity,
+                  const char *src, int32_t srcLength,
+                  UErrorCode *pErrorCode);
+
+    U_STABLE int32_t U_EXPORT2
+    ucnv_fromUChars(UConverter *cnv,
+                    char *dest, int32_t destCapacity,
+                    const UChar *src, int32_t srcLength,
+                    UErrorCode *pErrorCode);
+#else
+    #include <unicode/ucnv.h> // this header seems to be missing on iOS sdk
+#endif
 
 UChar *toUChar(const char *string);
 char *toChar(const UChar *ustring);
+int strlen_utf8(const char *s);
 
 struct RegexReplacePair {
     URegularExpression *regex;
@@ -106,7 +129,7 @@ char *zawgyi_to_unicode(const char *input)
         RegexReplacePairMake("[\u103A\u107D]",ya),
         // ya
         
-        RegexReplacePairMake("\u103E\u103B",str_concat(wa, ha)),
+        RegexReplacePairMake("\u103E\u103B",str_concat(ya, ha)),
         // reorder
         
         RegexReplacePairMake("\u108A",str_concat(wa, ha)),
@@ -271,6 +294,8 @@ UChar *toUChar(const char *string)
         destLen = ucnv_toUChars(conv, output, outputCapacity, string, -1, &errorCode);
     }
     
+    ucnv_close(conv);
+    
     return output;
 }
 
@@ -292,10 +317,12 @@ char *toChar(const UChar *ustring)
         destLen = ucnv_fromUChars(conv, output, destCapcaity, ustring, -1, &errorCode);
     }
     
+    ucnv_close(conv);
+    
     return output;
 }
 
-int strlen_utf8(char *s) {
+int strlen_utf8(const char *s) {
     int i = 0, j = 0;
     while (s[i]) {
         if ((s[i] & 0xc0) != 0x80) j++;
