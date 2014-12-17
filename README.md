@@ -27,5 +27,3 @@ free(unicode); // be sure to free when you are done
 ```objectivec
 NSLog("This is Unicode string: %@", ["ZawGyi sequence string" unicodeString]);
 ```
-
-https://github.com/ngwestar/parabaik is stated as GPL but this project is LGPL with the permission of original author – Ko Ngwe TUN.
