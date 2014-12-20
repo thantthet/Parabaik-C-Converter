@@ -98,15 +98,19 @@ FreeRegexReplacePair(RegexReplacePair *pair)
 
 int zuconverter_open()
 {
-    UErrorCode status = U_ZERO_ERROR;
+    if (opened == 1) {
+        return 0;
+    }
     
-    regex_pairs();
+    UErrorCode status = U_ZERO_ERROR;
     
     UConverterUTF8 = ucnv_open("utf-8", &status);
     if (status != U_ZERO_ERROR) {
         printf("ERROR(%i) when opening UConverter.\n", status);
         return 1;
     }
+    
+    regex_pairs();
     
     opened = 1;
     
@@ -331,6 +335,7 @@ char *zawgyi_to_unicode(const char *input)
         UChar *temp = malloc(length * U_SIZEOF_UCHAR);
         u_strncpy(temp, output, length);
         uregex_setText(regex, temp, length, &errorCode);
+        
         errorCode = U_ZERO_ERROR;
         __unused int32_t after_replaced = uregex_replaceAll(regex, pattern[i]->replace, -1, output, outputCapacity, &errorCode);
         free(temp);
