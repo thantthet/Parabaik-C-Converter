@@ -98,7 +98,7 @@ FreeRegexReplacePair(RegexReplacePair *pair)
 
 int zuconverter_open()
 {
-    if (opened == 1) {
+    if (opened == 1) { // already opened
         return 0;
     }
     
@@ -119,6 +119,10 @@ int zuconverter_open()
 
 int zuconverter_close()
 {
+    if (opened == 0) { // already closed
+        return 0;
+    }
+    
     RegexReplacePair **pairs = regex_pairs();
     for (int i = 0; pairs[i]->regex != NULL; i++) {
         FreeRegexReplacePair(pairs[i]);
