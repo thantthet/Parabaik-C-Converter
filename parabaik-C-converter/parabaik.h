@@ -18,6 +18,9 @@
 
 #include <stdio.h>
 
-char *zawgyi_to_unicode(const char *input);
+int zuconverter_open(); // returns non-zero on error
+int zuconverter_close(); // returns non-zero on error
+
+char *zawgyi_to_unicode(const char *input); // returns converted utf-8 encoded string
 
 #endif /* defined(__parabaik_C_converter__parabaik__) */

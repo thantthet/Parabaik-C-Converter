@@ -45,10 +45,6 @@
     #include <unicode/ucnv.h> // this header seems to be missing on iOS sdk
 #endif
 
-UChar *toUChar(const char *string);
-char *toChar(const UChar *ustring);
-int strlen_utf8(const char *s);
-
 struct RegexReplacePair {
     URegularExpression *regex;
     UChar *replace;
@@ -56,30 +52,13 @@ struct RegexReplacePair {
 
 typedef struct RegexReplacePair RegexReplacePair;
 
-//static inline RegexReplacePair
-//RegexReplacePairMake(const char *pattern, const char *replace)
-//{
-//    RegexReplacePair pair;
-//    
-//    pair.regex = NULL;
-//    pair.replace = NULL;
-//    
-//    UParseError pe;
-//    UErrorCode status = U_ZERO_ERROR;
-//    if (pattern) {
-//        URegularExpression *regex = uregex_openC(pattern, 0, &pe, &status);
-//        if (status != U_ZERO_ERROR) {
-//            printf("ERROR(%i) on compiling regex: pattern(%s)\n", status, pattern);
-//        }
-//        pair.regex = regex;
-//    }
-//    
-//    if (replace) {
-//        pair.replace = toUChar(replace);
-//    }
-//    
-//    return pair;
-//}
+UChar *toUChar(const char *string);
+char *toChar(const UChar *ustring);
+int strlen_utf8(const char *s);
+RegexReplacePair** regex_pairs();
+
+// converters
+static UConverter *UConverterUTF8;
 
 static inline RegexReplacePair *
 RegexReplacePairPtrMake(const char *pattern, const char *replace)
@@ -106,6 +85,43 @@ RegexReplacePairPtrMake(const char *pattern, const char *replace)
     }
     
     return pair;
+}
+
+static inline void
+FreeRegexReplacePair(RegexReplacePair *pair)
+{
+    free(pair->regex);
+    free(pair->replace);
+}
+
+int zuconverter_open()
+{
+    UErrorCode status = U_ZERO_ERROR;
+    
+    regex_pairs();
+    
+    UConverterUTF8 = ucnv_open("utf-8", &status);
+    if (status != U_ZERO_ERROR) {
+        printf("ERROR(%i) when opening UConverter.\n", status);
+        return 1;
+    }
+    
+    return 0;
+}
+
+int zuconverter_close()
+{
+    RegexReplacePair **pairs = regex_pairs();
+    for (int i = 0; pairs[i]->regex != NULL; i++) {
+        FreeRegexReplacePair(pairs[i]);
+        free(pairs[i]);
+    }
+    pairs = NULL;
+    
+    ucnv_close(UConverterUTF8);
+    UConverterUTF8 = NULL;
+    
+    return 0;
 }
 
 static inline char *
@@ -329,21 +345,18 @@ char *zawgyi_to_unicode(const char *input)
 UChar *toUChar(const char *string)
 {
     UErrorCode errorCode = U_ZERO_ERROR;
-    UConverter *conv = ucnv_open("utf-8", &errorCode);
     
     uint32_t outputCapacity = 100;
     UChar *output = (UChar*) malloc(outputCapacity * U_SIZEOF_UCHAR);
     
-    uint32_t destLen = ucnv_toUChars(conv, output, outputCapacity, string, -1, &errorCode);
+    uint32_t destLen = ucnv_toUChars(UConverterUTF8, output, outputCapacity, string, -1, &errorCode);
     if (errorCode == U_BUFFER_OVERFLOW_ERROR) {
         errorCode = U_ZERO_ERROR;
         free(output);
         output = (UChar*) malloc(destLen * U_SIZEOF_UCHAR);
         outputCapacity = destLen + 1;
-        destLen = ucnv_toUChars(conv, output, outputCapacity, string, -1, &errorCode);
+        destLen = ucnv_toUChars(UConverterUTF8, output, outputCapacity, string, -1, &errorCode);
     }
-    
-    ucnv_close(conv);
     
     return output;
 }
@@ -351,22 +364,19 @@ UChar *toUChar(const char *string)
 char *toChar(const UChar *ustring)
 {
     UErrorCode errorCode = U_ZERO_ERROR;
-    UConverter *conv = ucnv_open("utf-8", &errorCode);
     
     uint32_t destCapcaity = 100;
     char * output = (char*) malloc(destCapcaity * sizeof(char));
 
-    uint32_t destLen = ucnv_fromUChars(conv, output, destCapcaity, ustring, -1, &errorCode);
+    uint32_t destLen = ucnv_fromUChars(UConverterUTF8, output, destCapcaity, ustring, -1, &errorCode);
 
     if (errorCode == U_BUFFER_OVERFLOW_ERROR) {
         errorCode = U_ZERO_ERROR;
         free(output);
         output = (char*) malloc(destLen * sizeof(char));
         destCapcaity = destLen + 1;
-        destLen = ucnv_fromUChars(conv, output, destCapcaity, ustring, -1, &errorCode);
+        destLen = ucnv_fromUChars(UConverterUTF8, output, destCapcaity, ustring, -1, &errorCode);
     }
-    
-    ucnv_close(conv);
     
     return output;
 }
