@@ -18,6 +18,14 @@
 
 @implementation NSString (ParabaikConverter)
 
++ (void)load
+{
+    int status = zuconverter_open();
+    if (status) {
+        NSLog(@"ZU converter cannot be opened. Failed with error : %d", status);
+    }
+}
+
 - (NSString *)unicodeString
 {
     const char *zawgyiUTF8 = [self UTF8String];

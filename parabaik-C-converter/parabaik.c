@@ -57,8 +57,10 @@ char *toChar(const UChar *ustring);
 int strlen_utf8(const char *s);
 RegexReplacePair** regex_pairs();
 
-// converters
+// converter
 static UConverter *UConverterUTF8;
+// 1 if opened
+static int opened = 0;
 
 static inline RegexReplacePair *
 RegexReplacePairPtrMake(const char *pattern, const char *replace)
@@ -106,6 +108,8 @@ int zuconverter_open()
         return 1;
     }
     
+    opened = 1;
+    
     return 0;
 }
 
@@ -120,6 +124,8 @@ int zuconverter_close()
     
     ucnv_close(UConverterUTF8);
     UConverterUTF8 = NULL;
+    
+    opened = 0;
     
     return 0;
 }
@@ -304,6 +310,11 @@ RegexReplacePair** regex_pairs()
 
 char *zawgyi_to_unicode(const char *input)
 {
+    if (opened != 1) {
+        printf("You need to call zuconverter_open() once before using this function. Returning a copy of input string.\n");
+        return strdup(input);
+    }
+    
     UChar *inputUStr = toUChar(input);
     
     uint32_t outputCapacity = u_strlen(inputUStr) * 2;
