@@ -319,7 +319,7 @@ RegexReplacePair** regex_pairs()
 char *zawgyi_to_unicode(const char *input)
 {
     if (opened != 1) {
-        printf("You need to call zuconverter_open() once before using this function. Returning a copy of input string.\n");
+        printf("You need to call zuconverter_open() once before using this function. (returning a copy of input string for now).\n");
         return strdup(input);
     }
     
