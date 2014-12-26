@@ -67,7 +67,7 @@ RegexReplacePairPtrMake(const char *pattern, const char *replace)
 {
     RegexReplacePair *pair;
     
-    pair = malloc(sizeof(pair));
+    pair = malloc(sizeof(RegexReplacePair));
     
     pair->regex = NULL;
     pair->replace = NULL;
@@ -92,7 +92,7 @@ RegexReplacePairPtrMake(const char *pattern, const char *replace)
 static inline void
 FreeRegexReplacePair(RegexReplacePair *pair)
 {
-    free(pair->regex);
+    uregex_close(pair->regex);
     free(pair->replace);
 }
 
@@ -141,7 +141,7 @@ int zuconverter_close()
 static inline char *
 str_concat(char *s1, char *s2)
 {
-    char *cat = malloc(sizeof(char) * (strlen(s1) + strlen(s2)));
+    char *cat = malloc(sizeof(char) * (strlen(s1) + strlen(s2) + 1));
     strcpy(cat, s1);
     strcat(cat, s2);
     return cat;
@@ -176,8 +176,8 @@ RegexReplacePair** regex_pairs()
     char * ha = "\u103E";
     char * zero = "\u1040";
     
-    size_t capacity = 50;
-    pairs = malloc(sizeof(RegexReplacePair) * capacity);
+    size_t capacity = 100;
+    pairs = malloc(sizeof(RegexReplacePair *) * capacity);
     
     int i = 0;
     pairs[i++] = RegexReplacePairPtrMake("\u106A","\u1009");
@@ -329,6 +329,8 @@ char *zawgyi_to_unicode(const char *input)
     UChar *output = malloc(outputCapacity * U_SIZEOF_UCHAR);
     u_strcpy(output, inputUStr);
     
+    free(inputUStr);
+    
     RegexReplacePair **pattern = regex_pairs();
     
     for (int i = 0; pattern[i]->regex != NULL; i++) {
@@ -353,7 +355,12 @@ char *zawgyi_to_unicode(const char *input)
             char *tempchar = toChar(output);
             free(tempchar);
         } else if (errorCode != U_ZERO_ERROR) {
-            printf("ERROR(%i) while replacing text.\n", errorCode);
+            UErrorCode status = U_ZERO_ERROR;
+            char *p = toChar(uregex_pattern(regex, NULL, &status));
+            char *r = toChar(pattern[i]->replace);
+            printf("ERROR(%i) regex id (%d) pattern (%s) while replacing with replace string (%s).\n", errorCode, i, p, r);
+            free(p);
+            free(r);
         }
     }
     
@@ -364,6 +371,10 @@ char *zawgyi_to_unicode(const char *input)
 
 UChar *toUChar(const char *string)
 {
+    if (string == NULL) {
+        return NULL;
+    }
+    
     UErrorCode errorCode = U_ZERO_ERROR;
     
     uint32_t outputCapacity = 100;
@@ -383,6 +394,10 @@ UChar *toUChar(const char *string)
 
 char *toChar(const UChar *ustring)
 {
+    if (ustring == NULL) {
+        return NULL;
+    }
+    
     UErrorCode errorCode = U_ZERO_ERROR;
     
     uint32_t destCapcaity = 100;

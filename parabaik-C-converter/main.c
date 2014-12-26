@@ -20,7 +20,7 @@
 int main(int argc, const char * argv[]) {
     zuconverter_open();
     
-    char *outCStr = zawgyi_to_unicode("သီဟိုဠ္မွ ဉာဏ္ႀကီးရွင္သည္ အာယုဝၯနေဆးညႊန္းစာကို ဇလြန္ေဈးေဘးဗာဒံပင္ထက္ အဓိ႒ာန္လ်က္ ဂဃနဏဖတ္ခဲ့သည္။");
+    char *outCStr = zawgyi_to_unicode("သီဟိုဠ္မွ ဥာဏ္ႀကီးရွင္သည္ အာယုဝၯနေဆးညႊန္းစာကို ဇလြန္ေဈးေဘးဗာဒံပင္ထက္ အဓိ႒ာန္လ်က္ ဂဃနဏဖတ္ခဲ့သည္။");
     printf("%s\n", outCStr);
     free(outCStr);
     
