@@ -325,7 +325,7 @@ char *zawgyi_to_unicode(const char *input)
     
     UChar *inputUStr = toUChar(input);
     
-    uint32_t outputCapacity = u_strlen(inputUStr) * 2;
+    uint32_t outputCapacity = u_strlen(inputUStr) * 3;
     UChar *output = malloc(outputCapacity * U_SIZEOF_UCHAR);
     u_strcpy(output, inputUStr);
     
@@ -346,14 +346,13 @@ char *zawgyi_to_unicode(const char *input)
         __unused int32_t after_replaced = uregex_replaceAll(regex, pattern[i]->replace, -1, output, outputCapacity, &errorCode);
         free(temp);
         if (errorCode == U_STRING_NOT_TERMINATED_WARNING) { // not enough space ?
-            outputCapacity *= 2;
-            temp = malloc(outputCapacity * U_SIZEOF_UCHAR);
-            u_strncpy(temp, output, outputCapacity / 2);
+            uint32_t newOutputCapacity = outputCapacity * 2;
+            temp = malloc(newOutputCapacity * U_SIZEOF_UCHAR);
+            memcpy(temp, output, outputCapacity * U_SIZEOF_UCHAR);
             free(output);
-            output = temp;
             
-            char *tempchar = toChar(output);
-            free(tempchar);
+            outputCapacity = newOutputCapacity;
+            output = temp;
         } else if (errorCode != U_ZERO_ERROR) {
             UErrorCode status = U_ZERO_ERROR;
             char *p = toChar(uregex_pattern(regex, NULL, &status));
