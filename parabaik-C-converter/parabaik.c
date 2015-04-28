@@ -16,11 +16,13 @@
 #include "parabaik.h"
 #include <stdlib.h>
 #include <string.h>
+#import <pthread.h>
 
 #define U_DISABLE_RENAMING 1
 
 #include <unicode/ustring.h>
 #include <unicode/uregex.h>
+
 #if TARGET_OS_IPHONE
     typedef struct UConverter UConverter;
 
@@ -62,6 +64,8 @@ static UConverter *UConverterUTF8;
 // 1 if opened
 static int opened = 0;
 
+static pthread_mutex_t mutex;
+
 static inline RegexReplacePair *
 RegexReplacePairPtrMake(const char *pattern, const char *replace)
 {
@@ -102,6 +106,8 @@ int zuconverter_open()
         return 0;
     }
     
+    pthread_mutex_init(&mutex, NULL);
+    
     UErrorCode status = U_ZERO_ERROR;
     
     UConverterUTF8 = ucnv_open("utf-8", &status);
@@ -122,6 +128,8 @@ int zuconverter_close()
     if (opened == 0) { // already closed
         return 0;
     }
+    
+    pthread_mutex_destroy(&mutex);
     
     RegexReplacePair **pairs = regex_pairs();
     for (int i = 0; pairs[i]->regex != NULL; i++) {
@@ -323,6 +331,8 @@ char *zawgyi_to_unicode(const char *input)
         return strdup(input);
     }
     
+    pthread_mutex_lock(&mutex);
+    
     UChar *inputUStr = toUChar(input);
     
     uint32_t outputCapacity = u_strlen(inputUStr) * 3;
@@ -344,7 +354,9 @@ char *zawgyi_to_unicode(const char *input)
         
         errorCode = U_ZERO_ERROR;
         __unused int32_t after_replaced = uregex_replaceAll(regex, pattern[i]->replace, -1, output, outputCapacity, &errorCode);
+        
         free(temp);
+        
         if (errorCode == U_STRING_NOT_TERMINATED_WARNING) { // not enough space ?
             uint32_t newOutputCapacity = outputCapacity * 2;
             temp = malloc(newOutputCapacity * U_SIZEOF_UCHAR);
@@ -365,6 +377,9 @@ char *zawgyi_to_unicode(const char *input)
     
     char *outCStr = toChar(output);
     free(output);
+    
+    pthread_mutex_unlock(&mutex);
+    
     return outCStr;
 }
 
@@ -377,7 +392,7 @@ UChar *toUChar(const char *string)
     UErrorCode errorCode = U_ZERO_ERROR;
     
     uint32_t outputCapacity = 100;
-    UChar *output = (UChar*) malloc(outputCapacity * U_SIZEOF_UCHAR);
+    UChar *output = (UChar*) malloc((outputCapacity + 10) * U_SIZEOF_UCHAR);
     
     uint32_t destLen = ucnv_toUChars(UConverterUTF8, output, outputCapacity, string, -1, &errorCode);
     if (errorCode == U_BUFFER_OVERFLOW_ERROR) {
@@ -400,7 +415,7 @@ char *toChar(const UChar *ustring)
     UErrorCode errorCode = U_ZERO_ERROR;
     
     uint32_t destCapcaity = 100;
-    char * output = (char*) malloc(destCapcaity * sizeof(char));
+    char * output = (char*) malloc((destCapcaity + 10) * sizeof(char));
 
     uint32_t destLen = ucnv_fromUChars(UConverterUTF8, output, destCapcaity, ustring, -1, &errorCode);
 

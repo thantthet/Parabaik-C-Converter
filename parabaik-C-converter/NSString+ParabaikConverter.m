@@ -29,7 +29,9 @@
 - (NSString *)unicodeString
 {
     const char *zawgyiUTF8 = [self UTF8String];
+
     char * unicodeUTF8 = zawgyi_to_unicode(zawgyiUTF8);
+    
     NSString *unicodeString = [NSString stringWithCString:unicodeUTF8 encoding:NSUTF8StringEncoding];
     free(unicodeUTF8);
     return unicodeString;
