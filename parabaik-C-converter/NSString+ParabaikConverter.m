@@ -37,4 +37,15 @@
     return unicodeString;
 }
 
+- (NSString *)zawgyiString
+{
+    const char *unicodeUTF8 = [self UTF8String];
+    
+    char * zawgyiUTF8 = unicode_to_zawgyi(unicodeUTF8);
+    
+    NSString *zawgyiString = [NSString stringWithCString:zawgyiUTF8 encoding:NSUTF8StringEncoding];
+    free(zawgyiUTF8);
+    return zawgyiString;
+}
+
 @end

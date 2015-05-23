@@ -575,7 +575,7 @@ char *unicode_to_zawgyi(const char *input)
         URegularExpression *regex = pattern[i]->regex;
         
         UErrorCode errorCode = U_ZERO_ERROR;
-        int32_t length = u_strlen(output);
+        int32_t length = u_strlen(output) + 1;
         UChar *temp = malloc(length * U_SIZEOF_UCHAR);
         u_strncpy(temp, output, length);
         uregex_setText(regex, temp, length, &errorCode);
@@ -634,7 +634,7 @@ char *zawgyi_to_unicode(const char *input)
         URegularExpression *regex = pattern[i]->regex;
         
         UErrorCode errorCode = U_ZERO_ERROR;
-        int32_t length = u_strlen(output);
+        int32_t length = u_strlen(output) + 1;
         UChar *temp = malloc(length * U_SIZEOF_UCHAR);
         u_strncpy(temp, output, length);
         uregex_setText(regex, temp, length, &errorCode);

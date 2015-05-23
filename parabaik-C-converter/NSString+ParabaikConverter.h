@@ -19,5 +19,6 @@
 @interface NSString (ParabaikConverter)
 
 - (NSString *)unicodeString;
+- (NSString *)zawgyiString;
 
 @end
