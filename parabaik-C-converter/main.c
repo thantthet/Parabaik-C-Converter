@@ -21,7 +21,11 @@ int main(int argc, const char * argv[]) {
     zuconverter_open();
     
     char *outCStr = zawgyi_to_unicode("သီဟိုဠ္မွ ဥာဏ္ႀကီးရွင္သည္ အာယုဝၯနေဆးညႊန္းစာကို ဇလြန္ေဈးေဘးဗာဒံပင္ထက္ အဓိ႒ာန္လ်က္ ဂဃနဏဖတ္ခဲ့သည္။");
-    printf("%s\n", outCStr);
+    printf("ZG => UNI: %s\n", outCStr);
+    
+    outCStr = unicode_to_zawgyi(outCStr);
+    printf("UNI => ZG: %s\n", outCStr);
+    
     free(outCStr);
     
     zuconverter_close();

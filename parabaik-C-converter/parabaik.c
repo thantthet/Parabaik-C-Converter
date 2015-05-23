@@ -57,7 +57,8 @@ typedef struct RegexReplacePair RegexReplacePair;
 UChar *toUChar(const char *string);
 char *toChar(const UChar *ustring);
 int strlen_utf8(const char *s);
-RegexReplacePair** regex_pairs();
+RegexReplacePair** regex_pairs_for_zg2uni();
+RegexReplacePair** regex_pairs_for_uni2zg();
 
 // converter
 static UConverter *UConverterUTF8;
@@ -116,7 +117,8 @@ int zuconverter_open()
         return 1;
     }
     
-    regex_pairs();
+    regex_pairs_for_zg2uni();
+    regex_pairs_for_uni2zg();
     
     opened = 1;
     
@@ -131,7 +133,7 @@ int zuconverter_close()
     
     pthread_mutex_destroy(&mutex);
     
-    RegexReplacePair **pairs = regex_pairs();
+    RegexReplacePair **pairs = regex_pairs_for_zg2uni();
     for (int i = 0; pairs[i]->regex != NULL; i++) {
         FreeRegexReplacePair(pairs[i]);
         free(pairs[i]);
@@ -155,7 +157,233 @@ str_concat(char *s1, char *s2)
     return cat;
 }
 
-RegexReplacePair** regex_pairs()
+RegexReplacePair** regex_pairs_for_uni2zg()
+{
+    static RegexReplacePair **pairs;
+    
+    if (pairs) {
+        return pairs;
+    }
+    
+    size_t capacity = 100;
+    pairs = malloc(sizeof(RegexReplacePair *) * capacity);
+    
+    int i = 0;
+    pairs[i++] = RegexReplacePairPtrMake("\u104E\u1004\u103A\u1038","\u104E");
+    pairs[i++] = RegexReplacePairPtrMake("\u102B\u103A","\u105A");
+    pairs[i++] = RegexReplacePairPtrMake("\u102D\u1036","\u108E");
+    pairs[i++] = RegexReplacePairPtrMake("\u103F","\u1086");
+    
+    pairs[i++] = RegexReplacePairPtrMake("(\u102F[\u1036]?)\u1037","$1\u1094");
+    pairs[i++] = RegexReplacePairPtrMake("(\u1030[\u1036]?)\u1037","$1\u1094");
+    pairs[i++] = RegexReplacePairPtrMake("(\u1014[\u1036]?)\u1037","$1\u1094");
+    
+    pairs[i++] = RegexReplacePairPtrMake("(\u103B[\u1036]?)\u1037","$1\u1095");
+    pairs[i++] = RegexReplacePairPtrMake("(\u103D[\u1036]?)\u1037","$1\u1095");
+    
+    pairs[i++] = RegexReplacePairPtrMake("([\u103B\u103C\u103D][\u102D\u1036]?)\u102F","$1\u1033");
+    pairs[i++] = RegexReplacePairPtrMake("((\u1039[\u1000-\u1021])[\u102D\u1036]?)\u102F","$1\u1033");
+    pairs[i++] = RegexReplacePairPtrMake("([\u100A\u100C\u1020\u1025\u1029][\u102D\u1036]?)\u102F","$1\u1033");
+    
+    pairs[i++] = RegexReplacePairPtrMake("([\u103B\u103C][\u103D]?[\u103E]?[\u102D\u1036]?)\u1030","$1\u1034");
+    // uu - 2
+    pairs[i++] = RegexReplacePairPtrMake("((\u1039[\u1000-\u1021])[\u102D\u1036]?)\u1030","$1\u1034");
+    // uu - 2
+    pairs[i++] = RegexReplacePairPtrMake("([\u100A\u100C\u1020\u1025\u1029][\u102D\u1036]?)\u1030","$1\u1034");
+    // uu - 2
+    pairs[i++] = RegexReplacePairPtrMake("(\u103C)\u103E","$1\u1087");
+    
+    // ha - 2
+    
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u1009(?=[\u103A])", "\u1025");
+    pairs[i++] = RegexReplacePairPtrMake("\u1009(?=\u1039[\u1000-\u1021])", "\u1025");
+    
+    
+    
+    // E render
+    pairs[i++] = RegexReplacePairPtrMake("([\u1000-\u1021\u1029])(\u1039[\u1000-\u1021])?([\u103B-\u103E\u1087]*)?\u1031", "\u1031$1$2$3");
+    
+    // Ra render
+    
+    pairs[i++] = RegexReplacePairPtrMake("([\u1000-\u1021\u1029])(\u1039[\u1000-\u1021\u1000-\u1021])?(\u103C)", "$3$1$2");
+    
+    
+    
+    // Kinzi
+    pairs[i++] = RegexReplacePairPtrMake("\u1004\u103A\u1039", "\u1064");
+    // kinzi
+    pairs[i++] = RegexReplacePairPtrMake("(\u1064)([\u1031]?)([\u103C]?)([\u1000-\u1021])\u102D", "$2$3$4\u108B");
+    // reordering kinzi lgt
+    pairs[i++] = RegexReplacePairPtrMake("(\u1064)(\u1031)?(\u103C)?([ \u1000-\u1021])\u102E", "$2$3$4\u108C");
+    // reordering kinzi lgtsk
+    pairs[i++] = RegexReplacePairPtrMake("(\u1064)(\u1031)?(\u103C)?([ \u1000-\u1021])\u1036", "$2$3$4\u108D");
+    // reordering kinzi ttt
+    pairs[i++] = RegexReplacePairPtrMake("(\u1064)(\u1031)?(\u103C)?([ \u1000-\u1021])", "$2$3$4\u1064");
+    // reordering kinzi
+    
+    // Consonant
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u100A(?=[\u1039\u102F\u1030])", "\u106B");
+    // nnya - 2
+    pairs[i++] = RegexReplacePairPtrMake("\u100A", "\u100A");
+    // nnya
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u101B(?=[\u102F\u1030])", "\u1090");
+    // ra - 2
+    pairs[i++] = RegexReplacePairPtrMake("\u101B", "\u101B");
+    // ra
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u1014(?=[\u1039\u103D\u103E\u102F\u1030])", "\u108F");
+    // na - 2
+    pairs[i++] = RegexReplacePairPtrMake("\u1014", "\u1014");
+    // na
+    
+    // Stacked consonants
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1000", "\u1060");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1001", "\u1061");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1002", "\u1062");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1003", "\u1063");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1005", "\u1065");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1006", "\u1066");
+    // 1067
+    // output = output.replace(/([\u1001\u1002\u1004\u1005\u1007\u1012\u1013\u108F\u1015\u1016\u1017\u1019\u101D])\u1066/g, function($0, $1)
+    // {
+    //    return $1 ? $1 + '\u1067' : $0 + $1;
+    
+    // }
+    // );
+    pairs[i++] = RegexReplacePairPtrMake("([\u1001\u1002\u1004\u1005\u1007\u1012\u1013\u108F\u1015\u1016\u1017\u1019\u101D])\u1066", "$1\u1067");
+    // 1067
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1007", "\u1068");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1008", "\u1069");
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u100F", "\u1070");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1010", "\u1071");
+    // 1072 omit (little shift to right)
+    // output = output.replace(/([\u1001\u1002\u1004\u1005\u1007\u1012\u1013\u108F\u1015\u1016\u1017\u1019\u101D])\u1071/g, function($0, $1)
+    // {
+    //    return $1 ? $1 + '\u1072' : $0 + $1;
+    
+    // }
+    // );
+    pairs[i++] = RegexReplacePairPtrMake("([\u1001\u1002\u1004\u1005\u1007\u1012\u1013\u108F\u1015\u1016\u1017\u1019\u101D])\u1071", "$1\u1072");
+    // 1067
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1011", "\u1073");
+    // \u1074 omit(little shift to right)
+    // output = output.replace(/([\u1001\u1002\u1004\u1005\u1007\u1012\u1013\u108F\u1015\u1016\u1017\u1019\u101D])\u1073/g, function($0, $1)
+    // {
+    //    return $1 ? $1 + '\u1074' : $0 + $1;
+    
+    // }
+    // );
+    pairs[i++] = RegexReplacePairPtrMake("([\u1001\u1002\u1004\u1005\u1007\u1012\u1013\u108F\u1015\u1016\u1017\u1019\u101D])\u1073", "$1\u1074");
+    // 1067
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1012", "\u1075");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1013", "\u1076");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1014", "\u1077");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1015", "\u1078");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1016", "\u1079");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1017", "\u107A");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1018", "\u107B");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u1019", "\u107C");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u101C", "\u1085");
+    
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u100F\u1039\u100D", "\u1091");
+    pairs[i++] = RegexReplacePairPtrMake("\u100B\u1039\u100C", "\u1092");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u100C", "\u106D");
+    pairs[i++] = RegexReplacePairPtrMake("\u100B\u1039\u100B", "\u1097");
+    pairs[i++] = RegexReplacePairPtrMake("\u1039\u100B", "\u106C");
+    pairs[i++] = RegexReplacePairPtrMake("\u100E\u1039\u100D", "\u106F");
+    pairs[i++] = RegexReplacePairPtrMake("\u100D\u1039\u100D", "\u106E");
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u1009(?=\u103A)", "\u1025");
+    // u
+    pairs[i++] = RegexReplacePairPtrMake("\u1025(?=[\u1039\u102F\u1030])", "\u106A");
+    // u - 2
+    pairs[i++] = RegexReplacePairPtrMake("\u1025", "\u1025");
+    // u
+    /////////////////////////////////////
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u103A", "\u1039");
+    // asat
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u103B\u103D\u103E", "\u107D\u108A");
+    // ya wa ha
+    pairs[i++] = RegexReplacePairPtrMake("\u103D\u103E", "\u108A");
+    // wa ha
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u103B", "\u103A");
+    // ya
+    pairs[i++] = RegexReplacePairPtrMake("\u103C", "\u103B");
+    // ra
+    pairs[i++] = RegexReplacePairPtrMake("\u103D", "\u103C");
+    // wa
+    pairs[i++] = RegexReplacePairPtrMake("\u103E", "\u103D");
+    // ha
+    pairs[i++] = RegexReplacePairPtrMake("\u103A(?=[\u103C\u103D\u108A])", "\u107D");
+    // ya - 2
+    
+    // output = output.replace(/(\u100A(?:[\u102D\u102E\u1036\u108B\u108C\u108D\u108E])?)\u103D/g, function($0, $1)
+    // {
+    //    //      return $1 ? $1 + '\u1087 ' : $0 + $1;
+    //    return $1 ? $1 + '\u1087' : $0 ;
+    
+    // }
+    // );
+    pairs[i++] = RegexReplacePairPtrMake("(\u100A(?:[\u102D\u102E\u1036\u108B\u108C\u108D\u108E])?)\u103D", "$1\u1087");
+    // ha - 2
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u103B(?=[\u1000\u1003\u1006\u100F\u1010\u1011\u1018\u101A\u101C\u101E\u101F\u1021])", "\u107E");
+    // great Ra with wide consonants
+    pairs[i++] = RegexReplacePairPtrMake("\u107E([\u1000-\u1021\u108F])(?=[\u102D\u102E\u1036\u108B\u108C\u108D\u108E])", "\u1080$1");
+    // great Ra with upper sign
+    pairs[i++] = RegexReplacePairPtrMake("\u107E([\u1000-\u1021\u108F])(?=[\u103C\u108A])", "\u1082$1");
+    // great Ra with under signs
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u103B([\u1000-\u1021\u108F])(?=[\u102D \u102E \u1036 \u108B \u108C \u108D \u108E])", "\u107F$1");
+    // little Ra with upper sign
+    
+    pairs[i++] = RegexReplacePairPtrMake("\u103B([\u1000-\u1021\u108F])(?=[\u103C\u108A])", "\u1081$1");
+    // little Ra with under signs
+    
+    // output = output.replace(/(\u1014[\u103A\u1032]?)\u1037/g, function($0, $1)
+    // {
+    //    return $1 ? $1 + '\u1094' : $0 + $1;
+    
+    // }
+    // );
+    pairs[i++] = RegexReplacePairPtrMake("(\u1014[\u103A\u1032]?)\u1037", "$1\u1094");
+    // aukmyint
+    // output = output.replace(/(\u1033[\u1036]?)\u1094/g, function($0, $1)
+    // {
+    //    return $1 ? $1 + '\u1095' : $0 + $1;
+    
+    // }
+    // );
+    pairs[i++] = RegexReplacePairPtrMake("(\u1033[\u1036]?)\u1094", "$1\u1095");
+    // aukmyint
+    // output = output.replace(/(\u1034[\u1036]?)\u1094/g, function($0, $1)
+    // {
+    //    return $1 ? $1 + '\u1095' : $0 + $1;
+    
+    // }
+    // );
+    pairs[i++] = RegexReplacePairPtrMake("(\u1034[\u1036]?)\u1094", "$1\u1095");
+    // aukmyint
+    // output = output.replace(/([\u103C\u103D\u108A][\u1032]?)\u1037/g, function($0, $1)
+    // {
+    //    return $1 ? $1 + '\u1095' : $0 + $1;
+    
+    // }
+    pairs[i++] = RegexReplacePairPtrMake("([\u103C\u103D\u108A][\u1032]?)\u1037", "$1\u1095");
+    pairs[i++] = RegexReplacePairPtrMake(NULL, NULL);
+    
+    return pairs;
+}
+
+RegexReplacePair** regex_pairs_for_zg2uni()
 {
     static RegexReplacePair **pairs;
     
@@ -324,6 +552,65 @@ RegexReplacePair** regex_pairs()
     return pairs;
 }
 
+char *unicode_to_zawgyi(const char *input)
+{
+    if (opened != 1) {
+        printf("You need to call zuconverter_open() once before using this function. (returning a copy of input string for now).\n");
+        return strdup(input);
+    }
+    
+    pthread_mutex_lock(&mutex);
+    
+    UChar *inputUStr = toUChar(input);
+    
+    uint32_t outputCapacity = u_strlen(inputUStr) * 3;
+    UChar *output = malloc(outputCapacity * U_SIZEOF_UCHAR);
+    u_strcpy(output, inputUStr);
+    
+    free(inputUStr);
+    
+    RegexReplacePair **pattern = regex_pairs_for_uni2zg();
+    
+    for (int i = 0; pattern[i]->regex != NULL; i++) {
+        URegularExpression *regex = pattern[i]->regex;
+        
+        UErrorCode errorCode = U_ZERO_ERROR;
+        int32_t length = u_strlen(output);
+        UChar *temp = malloc(length * U_SIZEOF_UCHAR);
+        u_strncpy(temp, output, length);
+        uregex_setText(regex, temp, length, &errorCode);
+        
+        errorCode = U_ZERO_ERROR;
+        __unused int32_t after_replaced = uregex_replaceAll(regex, pattern[i]->replace, -1, output, outputCapacity, &errorCode);
+        
+        free(temp);
+        
+        if (errorCode == U_STRING_NOT_TERMINATED_WARNING) { // not enough space ?
+            uint32_t newOutputCapacity = outputCapacity * 2;
+            temp = malloc(newOutputCapacity * U_SIZEOF_UCHAR);
+            memcpy(temp, output, outputCapacity * U_SIZEOF_UCHAR);
+            free(output);
+            
+            outputCapacity = newOutputCapacity;
+            output = temp;
+        } else if (errorCode != U_ZERO_ERROR) {
+            UErrorCode status = U_ZERO_ERROR;
+            char *p = toChar(uregex_pattern(regex, NULL, &status));
+            char *r = toChar(pattern[i]->replace);
+            printf("ERROR(%i) regex id (%d) pattern (%s) while replacing with replace string (%s).\n", errorCode, i, p, r);
+            free(p);
+            free(r);
+        }
+    }
+    
+    char *outCStr = toChar(output);
+    free(output);
+    
+    pthread_mutex_unlock(&mutex);
+    
+    return outCStr;
+}
+
 char *zawgyi_to_unicode(const char *input)
 {
     if (opened != 1) {
@@ -341,7 +628,7 @@ char *zawgyi_to_unicode(const char *input)
     
     free(inputUStr);
     
-    RegexReplacePair **pattern = regex_pairs();
+    RegexReplacePair **pattern = regex_pairs_for_zg2uni();
     
     for (int i = 0; pattern[i]->regex != NULL; i++) {
         URegularExpression *regex = pattern[i]->regex;
