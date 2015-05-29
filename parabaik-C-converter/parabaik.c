@@ -559,6 +559,10 @@ char *unicode_to_zawgyi(const char *input)
         return strdup(input);
     }
     
+    if (strlen_utf8(input) == 0) {
+        return strdup(input);
+    }
+    
     pthread_mutex_lock(&mutex);
     
     UChar *inputUStr = toUChar(input);
@@ -615,6 +619,10 @@ char *zawgyi_to_unicode(const char *input)
 {
     if (opened != 1) {
         printf("You need to call zuconverter_open() once before using this function. (returning a copy of input string for now).\n");
+        return strdup(input);
+    }
+    
+    if (strlen_utf8(input) == 0) {
         return strdup(input);
     }
     
