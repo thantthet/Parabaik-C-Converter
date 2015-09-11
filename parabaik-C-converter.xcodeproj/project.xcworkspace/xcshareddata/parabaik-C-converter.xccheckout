@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>68F442EB-FDD7-4732-BCFF-E7D813703817</string>
+	<key>IDESourceControlProjectName</key>
+	<string>parabaik-C-converter</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>CE8A84CDA2999223B7DF83DDB3136E503C5D74FC</key>
+		<string>github.com:thantthet/Parabaik-C-Converter.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>parabaik-C-converter.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>CE8A84CDA2999223B7DF83DDB3136E503C5D74FC</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:thantthet/Parabaik-C-Converter.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>CE8A84CDA2999223B7DF83DDB3136E503C5D74FC</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>CE8A84CDA2999223B7DF83DDB3136E503C5D74FC</string>
+			<key>IDESourceControlWCCName</key>
+			<string>parabaik-C-converter</string>
+		</dict>
+	</array>
+</dict>
+</plist>
