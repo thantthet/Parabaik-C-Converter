@@ -24,7 +24,7 @@ print_f("This is Unicode string: %s", unicode);
 
 free(unicode); // be sure to free when you are done
 
-zuconverter_open(); // close converter to free the resources
+zuconverter_close(); // close converter to free the resources
 ```
 
 ### Objective-C Project
