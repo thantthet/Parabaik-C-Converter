@@ -65,8 +65,6 @@ static UConverter *UConverterUTF8;
 // 1 if opened
 static int opened = 0;
 
-static pthread_mutex_t mutex;
-
 static inline RegexReplacePair *
 RegexReplacePairPtrMake(const char *pattern, const char *replace)
 {
@@ -107,8 +105,6 @@ int zuconverter_open()
         return 0;
     }
     
-    pthread_mutex_init(&mutex, NULL);
-    
     UErrorCode status = U_ZERO_ERROR;
     
     UConverterUTF8 = ucnv_open("utf-8", &status);
@@ -130,8 +126,6 @@ int zuconverter_close()
     if (opened == 0) { // already closed
         return 0;
     }
-    
-    pthread_mutex_destroy(&mutex);
     
     RegexReplacePair **pairs = regex_pairs_for_zg2uni();
     for (int i = 0; pairs[i]->regex != NULL; i++) {
@@ -563,8 +557,6 @@ char *unicode_to_zawgyi(const char *input)
         return strdup(input);
     }
     
-    pthread_mutex_lock(&mutex);
-    
     UChar *inputUStr = toUChar(input);
     
     uint32_t outputCapacity = u_strlen(inputUStr) * 3;
@@ -610,8 +602,6 @@ char *unicode_to_zawgyi(const char *input)
     char *outCStr = toChar(output);
     free(output);
     
-    pthread_mutex_unlock(&mutex);
-    
     return outCStr;
 }
 
@@ -625,8 +615,6 @@ char *zawgyi_to_unicode(const char *input)
     if (strlen_utf8(input) == 0) {
         return strdup(input);
     }
-    
-    pthread_mutex_lock(&mutex);
     
     UChar *inputUStr = toUChar(input);
     
@@ -672,8 +660,6 @@ char *zawgyi_to_unicode(const char *input)
     
     char *outCStr = toChar(output);
     free(output);
-    
-    pthread_mutex_unlock(&mutex);
     
     return outCStr;
 }
