@@ -693,8 +693,9 @@ UChar *toUChar(const char *string)
     if (errorCode == U_BUFFER_OVERFLOW_ERROR) {
         errorCode = U_ZERO_ERROR;
         free(output);
+        destLen += 100;
         output = (UChar*) malloc(destLen * U_SIZEOF_UCHAR);
-        outputCapacity = destLen + 1;
+        outputCapacity = destLen;
         destLen = ucnv_toUChars(UConverterUTF8, output, outputCapacity, string, -1, &errorCode);
     }
     
@@ -717,8 +718,9 @@ char *toChar(const UChar *ustring)
     if (errorCode == U_BUFFER_OVERFLOW_ERROR) {
         errorCode = U_ZERO_ERROR;
         free(output);
+        destLen += 100;
         output = (char*) malloc(destLen * sizeof(char));
-        destCapcaity = destLen + 1;
+        destCapcaity = destLen;
         destLen = ucnv_fromUChars(UConverterUTF8, output, destCapcaity, ustring, -1, &errorCode);
     }
     
