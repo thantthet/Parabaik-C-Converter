@@ -57,8 +57,8 @@ typedef struct RegexReplacePair RegexReplacePair;
 UChar *toUChar(const char *string);
 char *toChar(const UChar *ustring);
 int strlen_utf8(const char *s);
-RegexReplacePair** regex_pairs_for_zg2uni();
-RegexReplacePair** regex_pairs_for_uni2zg();
+RegexReplacePair** regex_pairs_for_zg2uni(void);
+RegexReplacePair** regex_pairs_for_uni2zg(void);
 
 // converter
 static UConverter *UConverterUTF8;
