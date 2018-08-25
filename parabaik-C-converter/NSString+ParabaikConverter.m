@@ -29,6 +29,10 @@
 - (NSString *)unicodeString
 {
     const char *zawgyiUTF8 = [self UTF8String];
+    
+    if (!zawgyiUTF8) {
+        return [self copy];
+    }
 
     char * unicodeUTF8 = zawgyi_to_unicode(zawgyiUTF8);
     
@@ -40,6 +44,10 @@
 - (NSString *)zawgyiString
 {
     const char *unicodeUTF8 = [self UTF8String];
+    
+    if (!unicodeUTF8) {
+        return [self copy];
+    }
     
     char * zawgyiUTF8 = unicode_to_zawgyi(unicodeUTF8);
     
